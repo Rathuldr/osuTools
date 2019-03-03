@@ -88,4 +88,16 @@ public final class ReplayScoreData {
   public final ArrayList<ReplayTick> getReplayTicks() {
     return this.replayTicks;
   }
+
+  /**
+   * 
+   * TODO Write description for unpackLifebarGraph
+   * 
+   * @param parseString
+   * @return
+   */
+  public static ArrayList<IntDoublePair> unpackLifebarGraph(String parseString) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }

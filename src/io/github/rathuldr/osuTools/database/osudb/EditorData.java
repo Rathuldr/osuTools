@@ -3,7 +3,6 @@ package io.github.rathuldr.osuTools.database.osudb;
 
 import java.util.ArrayList;
 
-import io.github.rathuldr.osuTools.constants.GameMode;
 import io.github.rathuldr.osuTools.sharedtypes.TimingPoint;
 
 /**
@@ -15,8 +14,6 @@ import io.github.rathuldr.osuTools.sharedtypes.TimingPoint;
 public class EditorData {
   
   private final ArrayList<TimingPoint> timingPoints;
-  private final GameMode mode;
-  private final String difficultyName;
   private final double stackLeniency;
   private final int previewTimeMs;
   
@@ -29,10 +26,8 @@ public class EditorData {
    * @param stackLeniency
    * @param previewTimeMs
    */
-  public EditorData(ArrayList<TimingPoint> timingPoints, GameMode mode, String difficultyName, double stackLeniency, int previewTimeMs) {
+  public EditorData(ArrayList<TimingPoint> timingPoints, double stackLeniency, int previewTimeMs) {
     this.timingPoints = timingPoints;
-    this.mode = mode;
-    this.difficultyName = difficultyName;
     this.stackLeniency = stackLeniency;
     this.previewTimeMs = previewTimeMs;
   }
@@ -44,24 +39,6 @@ public class EditorData {
    */
   public final ArrayList<TimingPoint> getTimingPoints() {
     return this.timingPoints;
-  }
-  
-  /**
-   * TODO Write getter description for getMode
-   *
-   * @return a GameMode.
-   */
-  public final GameMode getMode() {
-    return this.mode;
-  }
-  
-  /**
-   * TODO Write getter description for getDifficultyName
-   *
-   * @return a String.
-   */
-  public final String getDifficultyName() {
-    return this.difficultyName;
   }
   
   /**

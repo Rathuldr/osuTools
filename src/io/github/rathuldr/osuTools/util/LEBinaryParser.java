@@ -6,6 +6,10 @@ import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.HashSet;
+
+import io.github.rathuldr.osuTools.constants.GameplayMod;
+import io.github.rathuldr.osuTools.sharedtypes.IntDoublePair;
 
 /**
  * This class handles parsing Little Endian data from osu! databases, such as <code>osu!.db</code> or
@@ -14,6 +18,9 @@ import java.time.ZoneId;
  * @author Rathuldr rathuldr@gmail.com
  */
 public class LEBinaryParser {
+  
+  /** The byte that marks the start of a C# string. */
+  public static final char STRING_START_BYTE = 0x0b;
   
   /** The number of bytes in a C# DateTime object. */
   public static final int NUM_BYTES_DATETIME = 8;
@@ -50,6 +57,42 @@ public class LEBinaryParser {
   public LEBinaryParser(final byte[] byteArr) {
     this.byteArr = byteArr;
     this.currOffset = 0;
+  }
+  
+  /**
+   * TODO Write description for isAtEndOfStream
+   * 
+   * @return
+   */
+  public final boolean isAtEndOfStream() {
+    return this.currOffset >= (this.byteArr.length - 1);
+  }
+  
+  /**
+   * TODO Write description for peekByte
+   * 
+   * @return
+   */
+  public final char peekByte() {
+    return (char) this.byteArr[this.currOffset];
+  }
+  
+  /**
+   * TODO Write description for parseIntDoublePair
+   * 
+   * @return
+   */
+  public final IntDoublePair parseIntDoublePair() {
+    this.parseChar();
+    
+    final int permFlags = this.parseInt();
+    
+    this.parseChar();
+    
+    final double starRating = this.parseDouble();
+    final HashSet<GameplayMod> modSet = GameplayMod.unpackFromBitField(permFlags);
+    
+    return new IntDoublePair(modSet, starRating);
   }
   
   /**
@@ -152,6 +195,17 @@ public class LEBinaryParser {
   }
   
   /**
+   * Consumes and parses a C# byte at the current position and treats it as a boolean.
+   * 
+   * @return true if the byte parsed is non-zero.
+   */
+  public final boolean parseCharAsBoolean() {
+    final boolean result = getCharAsBoolean(this.byteArr, this.currOffset);
+    this.currOffset += NUM_BYTES_CHAR;
+    return result;
+  }
+  
+  /**
    * Converts a C# DateTime value into a LocalDateTime at the specified position in the given byte array.
    * 
    * @param dat the byte array.
@@ -173,10 +227,12 @@ public class LEBinaryParser {
    * 
    * @return the String data.
    */
-  public static final StringResult getString(final byte[] dat, final int offset) {
+  public static final StringResult getString(final byte[] dat, int offset) {
     
     // Return the empty string if there is no entry
-    if (getLEVal(dat, offset, NUM_BYTES_CHAR) == 0) return new StringResult("", 1);
+    final long leVal = getLEVal(dat, offset, NUM_BYTES_CHAR);
+    
+    if (leVal == 0) return new StringResult("", 1);
     
     final VarIntResult viResult = getVarInt(dat, offset);
     final BigInteger viValue = viResult.getValue();
@@ -206,21 +262,28 @@ public class LEBinaryParser {
    * @return a structure containing the value parsed as a BigInteger and the number of bytes parsed.
    */
   public static final VarIntResult getVarInt(final byte[] b, final int offset) {
-    BigInteger value = BigInteger.ZERO;
+    
+    BigInteger strLen = BigInteger.ZERO;
     
     int i = 1;
     int byteCount = 0;
+    
     while (true) {
+      
       if (byteCount > 9) break;
+      
       final int currVal = (int) getLEVal(b, offset + (i++), NUM_BYTES_CHAR);
-      value = value.or(BigInteger.valueOf((currVal & 0x0000007f) << (byteCount * 7)));
-      if (currVal < 0) {
+      strLen = strLen.or(BigInteger.valueOf((currVal & 0x0000007f) << (byteCount * 7)));
+      
+      if (currVal < 128) {
         break;
       }
+      byteCount++;
     }
+    
     byteCount++;
     
-    return new VarIntResult(value, byteCount);
+    return new VarIntResult(strLen, byteCount);
   }
   
   /**
@@ -232,7 +295,8 @@ public class LEBinaryParser {
    * @return a double.
    */
   public static final double getDouble(final byte[] b, final int offset) {
-    return ByteBuffer.wrap(b, offset, NUM_BYTES_DOUBLE).getDouble();
+    final long bytesLong = getLEVal(b, offset, NUM_BYTES_DOUBLE);
+    return ByteBuffer.allocate(NUM_BYTES_DOUBLE).putLong(bytesLong).getDouble(0);
   }
   
   /**
@@ -244,7 +308,8 @@ public class LEBinaryParser {
    * @return a float.
    */
   public static final float getFloat(final byte[] b, final int offset) {
-    return ByteBuffer.wrap(b, offset, NUM_BYTES_FLOAT).getFloat();
+    final int bytesInt = (int) getLEVal(b, offset, NUM_BYTES_FLOAT);
+    return ByteBuffer.allocate(NUM_BYTES_FLOAT).putInt(bytesInt).getFloat(0);
   }
   
   /**
@@ -296,6 +361,19 @@ public class LEBinaryParser {
   }
   
   /**
+   * Returns the value of the byte array at the given offset as a boolean.
+   * 
+   * @param b the byte array.
+   * @param offset the position to start parsing a <code>boolean</code>.
+   * 
+   * @return true if the byte was non-zero; false otherwise.
+   */
+  public static final boolean getCharAsBoolean(final byte[] b, final int offset) {
+    final char c = getChar(b, offset);
+    return c != 0;
+  }
+  
+  /**
    * Returns the logarithm base-2 of the given value. This can be used to determine the number of bits required to store
    * a number.
    * 
@@ -339,6 +417,17 @@ public class LEBinaryParser {
    */
   private static final long winTicksToJavaTime(final long ticks) {
     return (ticks - 621_355_968_000_000_000L) / 10_000L;
+  }
+  
+  /**
+   * 
+   * TODO Write description for parseByteArray
+   * 
+   * @return
+   */
+  public Object parseByteArray() {
+    // FIXME Auto-generated method stub
+    return null;
   }
   
 }

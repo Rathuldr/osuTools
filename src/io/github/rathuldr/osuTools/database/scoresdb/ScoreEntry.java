@@ -2,6 +2,7 @@
 package io.github.rathuldr.osuTools.database.scoresdb;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.TreeSet;
 
 import io.github.rathuldr.osuTools.constants.GameMode;
@@ -24,7 +25,8 @@ public class ScoreEntry {
   private final JudgementCounts judgements;
   private final int score;
   private final short maxCombo;
-  private final TreeSet<GameplayMod> modsUsed;
+  private final boolean isPerfectCombo;
+  private final HashSet<GameplayMod> modsUsed;
   private final LocalDateTime timestamp;
   private final long onlineScoreID;
   
@@ -43,8 +45,9 @@ public class ScoreEntry {
    * @param timestamp
    * @param onlineScoreID
    */
-  public ScoreEntry(GameMode gameMode, int version, String beatmapHash, String playerName, String replayHash, JudgementCounts judgements, int score,
-      short maxCombo, TreeSet<GameplayMod> modsUsed, LocalDateTime timestamp, long onlineScoreID) {
+  public ScoreEntry(final GameMode gameMode, final int version, final String beatmapHash, final String playerName, final String replayHash,
+      final JudgementCounts judgements, final int score, final short maxCombo, final boolean isPerfectCombo, final HashSet<GameplayMod> modsUsed,
+      final LocalDateTime timestamp, final long onlineScoreID) {
     this.gameMode = gameMode;
     this.version = version;
     this.beatmapHash = beatmapHash;
@@ -52,6 +55,7 @@ public class ScoreEntry {
     this.replayHash = replayHash;
     this.judgements = judgements;
     this.score = score;
+    this.isPerfectCombo = isPerfectCombo;
     this.maxCombo = maxCombo;
     this.modsUsed = modsUsed;
     this.timestamp = timestamp;
@@ -113,6 +117,15 @@ public class ScoreEntry {
   }
   
   /**
+   * TODO Write description for isPerfectCombo
+   * 
+   * @return
+   */
+  public boolean isPerfectCombo() {
+    return this.isPerfectCombo;
+  }
+
+  /**
    * TODO Write getter description for getScore
    *
    * @return a int.
@@ -135,7 +148,7 @@ public class ScoreEntry {
    *
    * @return a TreeSet<GameplayMod>.
    */
-  public final TreeSet<GameplayMod> getModsUsed() {
+  public final HashSet<GameplayMod> getModsUsed() {
     return this.modsUsed;
   }
   

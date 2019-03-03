@@ -1,6 +1,7 @@
 
 package io.github.rathuldr.osuTools.database.osudb;
 
+import io.github.rathuldr.osuTools.constants.GameMode;
 import io.github.rathuldr.osuTools.sharedtypes.DifficultyMetadata;
 
 /**
@@ -12,10 +13,8 @@ import io.github.rathuldr.osuTools.sharedtypes.DifficultyMetadata;
 public class ContentData {
   
   private final DifficultyMetadata diffMetrics;
+  private final GameMode gameMode;
   private final String difficultyName;
-  private final short numHitCircles;
-  private final short numSliders;
-  private final short numSpinners;
   private final double sliderVelocity;
   
   /**
@@ -28,12 +27,10 @@ public class ContentData {
    * @param numSpinners
    * @param sliderVelocity
    */
-  public ContentData(DifficultyMetadata diffMetrics, String difficultyName, short numHitCircles, short numSliders, short numSpinners, double sliderVelocity) {
+  public ContentData(final DifficultyMetadata diffMetrics, final GameMode gameMode, final String difficultyName, final double sliderVelocity) {
     this.diffMetrics = diffMetrics;
+    this.gameMode = gameMode;
     this.difficultyName = difficultyName;
-    this.numHitCircles = numHitCircles;
-    this.numSliders = numSliders;
-    this.numSpinners = numSpinners;
     this.sliderVelocity = sliderVelocity;
   }
   
@@ -47,39 +44,21 @@ public class ContentData {
   }
   
   /**
+   * TODO Write description for getGameMode
+   * 
+   * @return
+   */
+  public GameMode getGameMode() {
+    return this.gameMode;
+  }
+  
+  /**
    * TODO Write getter description for getDifficultyName
    *
    * @return a String.
    */
   public final String getDifficultyName() {
     return this.difficultyName;
-  }
-  
-  /**
-   * TODO Write getter description for getNumHitCircles
-   *
-   * @return a short.
-   */
-  public final short getNumHitCircles() {
-    return this.numHitCircles;
-  }
-  
-  /**
-   * TODO Write getter description for getNumSliders
-   *
-   * @return a short.
-   */
-  public final short getNumSliders() {
-    return this.numSliders;
-  }
-  
-  /**
-   * TODO Write getter description for getNumSpinners
-   *
-   * @return a short.
-   */
-  public final short getNumSpinners() {
-    return this.numSpinners;
   }
   
   /**

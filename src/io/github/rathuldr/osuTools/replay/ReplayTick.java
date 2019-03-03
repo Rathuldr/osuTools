@@ -1,6 +1,7 @@
 
 package io.github.rathuldr.osuTools.replay;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import io.github.rathuldr.osuTools.constants.GameKey;
@@ -67,6 +68,18 @@ public class ReplayTick {
    */
   public final HashSet<GameKey> getKeyCombo() {
     return this.keyCombo;
+  }
+  
+  /**
+   * 
+   * TODO Write description for uncompressReplayTicks
+   * 
+   * @param parseByteArray
+   * @return
+   */
+  public static final ArrayList<ReplayTick> uncompressReplayTicks(final Object parseByteArray) {
+    // TODO Auto-generated method stub
+    return null;
   }
   
 }
